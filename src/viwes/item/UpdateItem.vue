@@ -3,11 +3,21 @@
     {{this.$route.params.item}}
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="商品名称" prop="itemName"><el-input v-model="ruleForm.itemName"></el-input></el-form-item>
-      <el-form-item label="商品价格" ><el-input v-model="ruleForm.price"></el-input></el-form-item>
-      <el-form-item label="所属商店" prop="shop">
+      <el-form-item label="商品价格"><el-input v-model="ruleForm.price"></el-input></el-form-item>
+      <el-form-item label="单位">
+        <el-select v-model="ruleForm.unit" placeholder="请选择单位">
+          <el-option
+              v-for="item in unitOptions"
+              :key="item.unitId"
+              :label="item.unitName"
+              :value="item.unitId">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="所属商店">
         <el-select v-model="ruleForm.shop" placeholder="请选择所属商店">
           <el-option
-              v-for="item in options"
+              v-for="item in shopOptions"
               :key="item.shopId"
               :label="item.shopName"
               :value="item.shopId">
@@ -32,9 +42,11 @@ export default {
         itemName: this.$route.params.item.itemName,
         price: this.$route.params.item.price,
         shop: '',
+        unit: '',
         shopName:this.$route.params.item.shopName
       },
-      options:[],
+      shopOptions:[],
+      unitOptions:[],
       rules: {
         itemName: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
@@ -48,14 +60,25 @@ export default {
   },
   methods:{
     open(){
+      //获取全部商店
       this.$axios.get(this.$base_url + "shop/retrieveAllShop").then((res) => {
-            if (res.data.code!=200){
-              alert("获取数据失败");
-            }else {
-              console.log(res.data.data)
-              this.options = res.data.data
-            }
-        })
+        if (res.data.code!=200){
+          alert("获取数据失败");
+        }else {
+          console.log(res.data.data)
+          this.shopOptions = res.data.data
+        }
+      });
+
+      //获取全部单位
+      this.$axios.get(this.$base_url + "unit/retrieveAllUnit").then((res) => {
+        if (res.data.code!=200){
+          alert("获取数据失败");
+        }else {
+          console.log(res.data.data)
+          this.unitOptions = res.data.data
+        }
+      });
     },
 
     submitForm(formName) {
@@ -65,7 +88,8 @@ export default {
               {
                 itemName:this.ruleForm.itemName,
                 price:this.ruleForm.price,
-                shopId:this.ruleForm.shop == 0 || this.ruleForm.shop == null ? this.$route.params.item.shopId : this.ruleForm.shop
+                shopId:this.ruleForm.shop == 0 || this.ruleForm.shop == null ? this.$route.params.item.shopId : this.ruleForm.shop,
+                unitId:this.ruleForm.unit == 0 || this.ruleForm.unit == null ? this.$route.params.item.unitId : this.ruleForm.unit,
               }).then((res)=>{
             if (res.data.code != 200) {
               this.$notify.error({
