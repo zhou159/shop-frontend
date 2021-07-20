@@ -13,7 +13,7 @@ axios.defaults.withCredentials = true
 
 
 Vue.prototype.$axios = axios
-Vue.prototype.$base_url = 'http://localhost:8080/'
+Vue.prototype.$base_url = 'http://localhost:8081/'
 
 Vue.use(VueAxios, axios);
 //显示声明使用VueRouter

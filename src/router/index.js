@@ -2,6 +2,8 @@ import vue from 'vue'
 import VueRouter from "vue-router"
 
 import NotFound from "../viwes/NotFound"
+import Main from "../viwes//item/Main.vue"
+import UpdateItem from "../viwes/item/UpdateItem"
 
 vue.use(VueRouter);//安装路由
 
@@ -10,7 +12,7 @@ export default new VueRouter({
     routes: [
         // {
         //     //路由路径
-        //     path: '/main',
+        //     path: '/item',
         //     //跳转的组件
         //     component: Main,
         //     props: true,
@@ -24,8 +26,17 @@ export default new VueRouter({
         //         ]
         // },
         {
+            path:'/',
+            component: Main
+        },
+        {
             path: '*',
             component: NotFound
+        },
+        {
+            path: '/updateItem/:item',
+            component: UpdateItem,
+            name:"updateItem"
         }
         ]
 })
