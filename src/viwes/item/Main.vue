@@ -7,10 +7,10 @@
     </div>
     <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" >
-      <el-form-item label="商品名称" prop="itemName" ><el-input v-model="ruleForm.itemName" ></el-input></el-form-item>
-      <el-form-item label="商品价格" prop="price"><el-input v-model="ruleForm.price"></el-input></el-form-item>
-      <el-form-item label="单位" prop="unit">
-        <el-select v-model="ruleForm.unit" placeholder="请选择单位">
+      <el-form-item label="商品名称" prop="itemName" ><el-input v-model="ruleForm.itemName" placeholder="请输入商品名字"></el-input></el-form-item>
+      <el-form-item label="商品价格" prop="price"><el-input v-model="ruleForm.price" placeholder="请输入商品价格"></el-input></el-form-item>
+      <el-form-item label="计量单位" prop="unit">
+        <el-select v-model="ruleForm.unit" placeholder="请选择计量单位">
           <el-option
               v-for="item in unitOptions"
               :key="item.unitId"
@@ -29,7 +29,17 @@
               :value="item.shopId">
           </el-option>
         </el-select>
-
+      </el-form-item>
+      <el-form-item label="规格数量" prop="quantity"><el-input v-model="ruleForm.quantity" placeholder="请输入规格数量"></el-input></el-form-item>
+      <el-form-item label="规格" prop="specification">
+        <el-select v-model="ruleForm.specification" placeholder="请选择规格">
+          <el-option
+              v-for="item in specificationOptions"
+              :key="item.specificationId"
+              :label="item.specificationName"
+              :value="item.specificationId">
+          </el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item style="margin-left: 0px">
@@ -43,7 +53,8 @@
     <el-table :data="tableData" style="width: 100%" height="530px" border >
       <el-table-column fixed prop="itemName" label="名字" width="180"></el-table-column>
       <el-table-column prop="price" label="价格（￥）" width="180"></el-table-column>
-      <el-table-column prop="unitName" label="单位" width="50"></el-table-column>
+      <el-table-column prop="unitName" label="计量单位" width="80"></el-table-column>
+      <el-table-column prop="showQuantity" label="规格/每单位" width="100"></el-table-column>
       <el-table-column prop="itemCreateTime" label="创建时间" width="180"></el-table-column>
       <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
       <el-table-column
@@ -73,11 +84,14 @@ export default {
         itemName: '',
         price: '',
         shop: '',
-        unit: ''
+        unit: '',
+        specification: '',
+        quantity: ''
       },
       search:'',
       shopOptions:[],
       unitOptions:[],
+      specificationOptions:[],
       rules: {
         itemName: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
@@ -91,7 +105,14 @@ export default {
           { required: true, message: '请选择所属商店', trigger: 'blur' }
         ],
         unit:[
-          { required: true, message: '请选择单位', trigger: 'blur' }
+          { required: true, message: '请选择计量单位', trigger: 'blur' }
+        ],
+        quantity:[
+          { required: true, message: '请输入规格数量', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ],
+        specification:[
+          { required: true, message: '请选择规格', trigger: 'blur' }
         ]
       }
     }
@@ -129,6 +150,16 @@ export default {
         }else {
           console.log(res.data.data)
           this.unitOptions = res.data.data
+        }
+      });
+
+      //获取全部规格
+      this.$axios.get(this.$base_url + "specification/retrieveAllSpecification").then((res) => {
+        if (res.data.code!=200){
+          alert("获取数据失败");
+        }else {
+          console.log(res.data.data)
+          this.specificationOptions = res.data.data
         }
       });
     },
@@ -177,7 +208,9 @@ export default {
                 itemName:this.ruleForm.itemName,
                 price:this.ruleForm.price,
                 shopId:this.ruleForm.shop,
-                unitId:this.ruleForm.unit
+                unitId:this.ruleForm.unit,
+                specificationId:this.ruleForm.specification,
+                itemUnitQuantity:this.ruleForm.quantity
               }).then((res)=>{
                 if (res.data.code != 200) {
                   this.$notify.error({
