@@ -4,7 +4,9 @@ import VueRouter from "vue-router"
 import NotFound from "../viwes/NotFound"
 import Main from "../viwes//item/Main.vue"
 import UpdateItem from "../viwes/item/UpdateItem"
-import ShopMain from "../viwes/shop/ShopMain";
+import ShopMain from "../viwes/maintain/ShopMaintain";
+import UnitMaintain from "../viwes/maintain/UnitMaintain";
+import SpecificationMaintain from "../viwes/maintain/SpecificationMaintain";
 
 vue.use(VueRouter);//安装路由
 
@@ -28,11 +30,13 @@ export default new VueRouter({
         // },
         {
             path:'/',
-            component: Main
+            component: Main,
+            name:"main"
         },
         {
             path: '*',
-            component: NotFound
+            component: NotFound,
+
         },
         {
             path: '/updateItem/:item',
@@ -40,8 +44,19 @@ export default new VueRouter({
             name:"updateItem"
         },
         {
-            path: '/shopMain',
-            component: ShopMain
+            path: '/shopMaintain',
+            component: ShopMain,
+            name:"shopMaintain"
+        },
+        {
+            path: '/specificationMaintain',
+            component: SpecificationMaintain,
+            name:"specificationMaintain"
+        },
+        {
+            path: '/unitMaintain',
+            component: UnitMaintain,
+            name:"unitMaintain"
         }
         ]
 })
